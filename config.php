@@ -9,12 +9,22 @@ if(isset($_SERVER['HTTPS'])){
    $mainURL = $protocol . "://" . $_SERVER['HTTP_HOST'].'/';
 
 /*---- Config.php Settings --- */
-//$mainURL = 'http://www.cakedesert.com/';
-//$mainURL = $_SERVER['HTTP_HOST'];
 
 define('HOMEURL',$mainURL);
 define('SITEURL',$mainURL);
 define('BASEURL',$mainURL);
+
+
+/* Database settings */
+
+define('db_database','hmvc');
+define('db_hostname','localhost');
+define('db_username','root');
+define('db_password','');
+define('db_prefix','');
+
+/* */
+
 
 ?>
 
