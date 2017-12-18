@@ -52,21 +52,28 @@ class Restlogin extends REST_Controller{
 				//checking is authendication 
 				$user_id = is_user_auth($email,$password);
 
-				if($user_id!==''){
+				if(trim($user_id)!==''){
+
+					/* starting session */
+
+					$return_token = insert_user_session($user_id);
+
+					if(trim($return_token)!==''){
+
+						$this->response(array('status' => TRUE,
+											  'token'  => $return_token,
+											  'message'=> 'user logged in successfully'
+											));
+
+					}else{ $this->response(array('status' => FALSE,
+											  'message'=> 'user login failure'
+											));
+							}
 
 					
+				}else{ $this->response(array('status' => FALSE, 'message' => 'Email and Password is missmatch')); }
 
-				}else{
-
-				$this->response(array('status' => FALSE, 'message' => 'Email and Password is missmatch'));
-
-				}
-
-			}else{
-
-				$this->response(array('status' => FALSE, 'message' => 'you are not registered user please sign up'));
-
-			}
+			}else{ $this->response(array('status' => FALSE, 'message' => 'you are not registered user please sign up')); }
 
 		}else{
 
@@ -78,7 +85,8 @@ class Restlogin extends REST_Controller{
 	}
 
 	public function test_post(){
-		$this->response(user_session_data('101'));
+		$this->response(read_user_session($_SERVER['HTTP_TOKEN']));
+		//$this->response(user_session_data(101));
 	}
 
 
