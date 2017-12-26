@@ -18,9 +18,27 @@ require APPPATH . 'libraries/REST_Controller.php';
 
 class Restlogin extends REST_Controller{
 
+	/* authendicate user */
+
+	private $user_details;
+	private $user_token;
+
 	public function __construct(){
 		parent::__construct();
-		$this->load->library('downloads');
+		
+		// validating user 
+
+		if(!empty($_SERVER['HTTP_TOKEN'])){
+			$this->token = $_SERVER['HTTP_TOKEN'];
+			$readed_data = read_user_session($_SERVER['HTTP_TOKEN']);
+			if(!empty($readed_data)){
+				$this->user_details = $readed_data;
+			}else{
+				$this->user_details = NULL;
+			}
+		}else{
+			$this->user_details = NULL;
+		}
 	}
 
 	/* return format of login */
@@ -87,6 +105,24 @@ class Restlogin extends REST_Controller{
 	public function test_post(){
 		$this->response(read_user_session($_SERVER['HTTP_TOKEN']));
 		//$this->response(user_session_data(101));
+	}
+
+	public function logout_get($param=''){
+
+		if($this->user_token!=NULL){
+			if(user_logout($this->user_token)==TRUE){
+				$this->response(array('status' => TRUE,
+									  'message'=> 'user logged out successfully'
+											));
+			}
+		}else{
+
+			$this->response(array('status' => FALSE,
+								  'message'=> 'user logged out unsuccessfull'
+											));
+		}
+
+
 	}
 
 

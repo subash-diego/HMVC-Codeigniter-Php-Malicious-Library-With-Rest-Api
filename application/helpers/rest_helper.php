@@ -132,6 +132,16 @@ function read_user_session($token){
 
 }
 
+/* logout rest user */
+
+function user_logout($token){
+	$CI =& get_instance();
+	$CI->db->where('token',$token);
+	if($CI->db->delete($CI->db->dbprefix('session_management'))==TRUE){
+		return TRUE;
+	}
+}
+
 
 
 
