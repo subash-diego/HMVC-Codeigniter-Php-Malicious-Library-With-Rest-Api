@@ -14,7 +14,6 @@ define('HOMEURL',$mainURL);
 define('SITEURL',$mainURL);
 define('BASEURL',$mainURL);
 
-
 /* Database settings */
 
 define('db_database','hmvc');
