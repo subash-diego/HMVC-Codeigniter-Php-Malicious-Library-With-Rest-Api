@@ -6,7 +6,7 @@ if(isset($_SERVER['HTTPS'])){
     else{
         $protocol = 'http';
     }
-   $mainURL = $protocol . "://" . $_SERVER['HTTP_HOST'].'/';
+   $mainURL = $protocol . "://" . $_SERVER['HTTP_HOST'].'/HMVC-Codeigniter/';
 
 /*---- Config.php Settings --- */
 
