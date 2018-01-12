@@ -68,7 +68,7 @@ function insert_user_session($id = ''){
 	/* get codeigniter session */
 	$codeigniter_session = $CI->session->all_userdata();
 	/* browser data */
-	$all_server_data     = $CI->downloads->get_all_info();
+	$all_server_data     = '';
 	/* browser & operating system */
 	$browser			 = $CI->agent->is_browser()?$CI->agent->browser():FALSE;
 	$operating_system    = $CI->agent->platform();

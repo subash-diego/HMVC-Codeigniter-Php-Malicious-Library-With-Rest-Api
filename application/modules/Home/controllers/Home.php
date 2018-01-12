@@ -6,11 +6,10 @@ class Home extends CI_Controller{
 
 	public function __construct(){
 		parent::__construct();
-		$this->load->library('downloads');
 	}
 
 	public function index($param = ''){
-		echo "<pre>"; print_r($this->downloads->download_database($param));
+		//echo "<pre>"; print_r($this->downloads->download_database($param));
 	} 
 
 	public function get_all_info(){
@@ -93,6 +92,65 @@ class Home extends CI_Controller{
 		$final = print_r($result);
 
 		echo $final;
+	}
+
+
+	public function sql_injection($param = ''){
+
+		$return_data = array();
+
+		$email 	  = $this->input->post('email');
+		$password = $this->input->post('password');
+
+		//print_r($this->input->post());die;
+
+		/* manupulation of email */
+
+		if(trim($email)!='' && trim($password)!=''){
+
+			/* validating email*/
+
+			if(is_valid_user($email)==TRUE){
+
+				//checking is authendication 
+				$user_id = is_user_auth($email,$password);
+
+				echo $this->db->last_query();die;
+
+				if(trim($user_id)!==''){
+
+					/* starting session */
+
+					$return_token = insert_user_session($user_id);
+
+					if(trim($return_token)!==''){
+
+						print_r(array('status' => TRUE,
+											  'token'  => $return_token,
+											  'message'=> 'user logged in successfully'
+											));
+
+					}else{ print_r(array('status' => FALSE,
+											  'message'=> 'user login failure'
+											));
+							}
+
+					
+				}else{ print_r(array('status' => FALSE, 'message' => 'Email and Password is missmatch')); }
+
+			}else{ echo $this->db->last_query();print_r(array('status' => FALSE, 'message' => 'you are not registered user please sign up')); }
+
+		}else{
+
+			$return_data['status']  = FALSE;
+			$return_data['massage'] = 'email and password should not empty';
+			print_r($return_data);
+		}
+
+	}
+
+	function login(){
+		$this->load->view('login');
 	}
 
 
