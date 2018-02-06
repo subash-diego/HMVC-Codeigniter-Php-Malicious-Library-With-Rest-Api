@@ -18,8 +18,8 @@ define('BASEURL',$mainURL);
 
 define('db_database','hmvc');
 define('db_hostname','localhost');
-define('db_username','subash');
-define('db_password','hanuman');
+define('db_username','root');
+define('db_password','');
 define('db_prefix','hmvc');
 
 /* */
