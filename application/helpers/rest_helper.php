@@ -84,6 +84,7 @@ function insert_user_session($id = '',$ip=''){
 		'framework_token' =>!empty($codeigniter_session['__ci_last_regenerate'])?$codeigniter_session['__ci_last_regenerate']:FALSE,
 		'userid'	=> $id,
 		'created_on'=> date('Y-m-d h:i:s'),
+		'updated_on'=> date('Y-m-d h:i:s'),
 		'browser'   => $browser,
 		'operating_system' => $operating_system,
 		'expired_to' => $expired_to,
@@ -111,26 +112,39 @@ function read_user_session($token='',$ip=''){
 	/* current time */
 
 	$current_time = strtotime(date('Y-m-d H:i:s'));
-	//return strtotime($current_time).' next'.strtotime('2017-12-18 06:30:00');
-
+	
 	/* validation */
 
-	if($result->num_rows() > 0){
+	if($result->num_rows()){
 
 		$returned_result = $result->row();
-		
-		if(strtotime($returned_result->expired_to) > $current_time)
-		{
-			
-			return array('result' =>true,'data' =>$returned_result);
 
+		$return_time  = strtotime($returned_result->expired_to);
+		$updated_time = strtotime($returned_result->updated_on);
+
+		if($return_time > $updated_time){
+
+			//updating token session timings
+			$expired_to= date('Y-m-d H:i:s', strtotime('+1 day', time()));
+			$CI->db->where('token',$token);
+			$CI->db->update($CI->db->dbprefix('session_management'),
+				array('updated_on' => date('Y-m-d H:i:s'),
+					  'expired_to' => $expired_to
+			));
+
+			return array('result' =>true,'data' =>$returned_result);
 		}else{
 
+			//inserting tracking and deleting management session
+			$data_insert = array_shift(json_decode(json_encode($returned_result), True));
 
-			return array('result' =>false,'data' =>NULL);
+			$CI->db->insert($CI->db->dbprefix('user_tracking'),$data_insert);
 
+			//deleting cookies from session mangement
 			$CI->db->where('token',$token);
 			$CI->db->delete($CI->db->dbprefix('session_management'));
+			
+			return array('result' =>false,'data' =>NULL);
 		}
 
 	}
@@ -140,11 +154,32 @@ function read_user_session($token='',$ip=''){
 /* logout rest user */
 
 function user_logout($token){
+	
 	$CI =& get_instance();
-	$CI->db->where('token',$token);
-	if($CI->db->delete($CI->db->dbprefix('session_management'))==TRUE){
-		return TRUE;
+
+	//getting datas from token
+	$CI->db->where(array('token' => $token));
+	$result = $CI->db->get($CI->db->dbprefix('session_management'));
+
+	if($result->num_rows()){
+		//converting to array
+		$returned_result = $result->row();
+		$filter_data 	 = NULL;
+		foreach ($returned_result as $key => $value) {
+			if($key != 'id'){
+			$filter_data[$key] = $value;
+			}
+		}
+	// inserting session track
+	$CI->db->insert($CI->db->dbprefix('user_tracking'),$filter_data);
+
+	//deleting management row
+		$CI->db->where('token',$token);
+		if($CI->db->delete($CI->db->dbprefix('session_management'))==TRUE){
+			return TRUE;
+		}
 	}
+
 }
 
 function is_logged_in($token='',$ip='')

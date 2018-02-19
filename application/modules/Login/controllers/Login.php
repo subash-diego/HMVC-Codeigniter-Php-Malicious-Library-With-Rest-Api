@@ -16,7 +16,7 @@ require APPPATH . 'libraries/REST_Controller.php';
  * @link            https://github.com/chriskacerguis/codeigniter-restserver
  */
 
-class Restlogin extends REST_Controller{
+class Login extends REST_Controller{
 
 	/* authendicate user */
 
@@ -27,9 +27,14 @@ class Restlogin extends REST_Controller{
 		parent::__construct();
 		
 		// validating user 
-		if(read_user_session(!empty($_SERVER['HTTP_TOKEN'])?$_SERVER['HTTP_TOKEN']:NULL,$_SERVER['REMOTE_ADDR'])==1){
+		/*if(read_user_session(!empty($_SERVER['HTTP_TOKEN'])?$_SERVER['HTTP_TOKEN']:NULL,$_SERVER['REMOTE_ADDR'])==1){
+		}*/
 
-		}
+
+		$this->user_token = !empty($_SERVER['HTTP_TOKEN'])?$_SERVER['HTTP_TOKEN']:NULL;
+
+		//$this->response($this->user_token);die;
+
 
 		/*if(!empty($_SERVER['HTTP_TOKEN'])){
 			$this->user_token = str_replace('"','', $_SERVER['HTTP_TOKEN']);
