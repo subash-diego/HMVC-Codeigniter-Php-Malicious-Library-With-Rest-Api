@@ -59,7 +59,7 @@ function create_token(){
 
 }
 
-function insert_user_session($id = ''){
+function insert_user_session($id = '',$ip=''){
 
 	$CI =& get_instance();
 	$CI->load->library('user_agent');
@@ -86,7 +86,8 @@ function insert_user_session($id = ''){
 		'created_on'=> date('Y-m-d h:i:s'),
 		'browser'   => $browser,
 		'operating_system' => $operating_system,
-		'expired_to' => $expired_to
+		'expired_to' => $expired_to,
+		'ip'		=> $ip
 		);
 
 	// true
@@ -98,13 +99,13 @@ function insert_user_session($id = ''){
 
 /* reading user session in codeigniter */
 
-function read_user_session($token){
+function read_user_session($token='',$ip=''){
 
 	$CI =& get_instance();
 
 	/* validate cookie and manupulate */
 
-	$CI->db->where('token',$token);
+	$CI->db->where(array('token' => $token,'ip' => $ip));
 	$result = $CI->db->get($CI->db->dbprefix('session_management'));
 
 	/* current time */
@@ -118,11 +119,15 @@ function read_user_session($token){
 
 		$returned_result = $result->row();
 		
-		if((strtotime($returned_result->expired_to) > $current_time) && $returned_result->token == $token)
+		if(strtotime($returned_result->expired_to) > $current_time)
 		{
-			return $returned_result;
+			
+			return array('result' =>true,'data' =>$returned_result);
 
 		}else{
+
+
+			return array('result' =>false,'data' =>NULL);
 
 			$CI->db->where('token',$token);
 			$CI->db->delete($CI->db->dbprefix('session_management'));
@@ -138,6 +143,18 @@ function user_logout($token){
 	$CI =& get_instance();
 	$CI->db->where('token',$token);
 	if($CI->db->delete($CI->db->dbprefix('session_management'))==TRUE){
+		return TRUE;
+	}
+}
+
+function is_logged_in($token='',$ip='')
+{
+	$CI =& get_instance();
+
+	$CI->db->where(array('token' => $token,'ip' => $ip));
+	$query = $CI->db->get($CI->db->dbprefix('session_management'));
+
+	if($query->num_rows() > 0){
 		return TRUE;
 	}
 }

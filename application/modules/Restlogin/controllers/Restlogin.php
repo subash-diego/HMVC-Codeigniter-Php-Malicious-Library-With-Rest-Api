@@ -27,9 +27,12 @@ class Restlogin extends REST_Controller{
 		parent::__construct();
 		
 		// validating user 
+		if(read_user_session(!empty($_SERVER['HTTP_TOKEN'])?$_SERVER['HTTP_TOKEN']:NULL,$_SERVER['REMOTE_ADDR'])==1){
 
-		if(!empty($_SERVER['HTTP_TOKEN'])){
-			$this->token = $_SERVER['HTTP_TOKEN'];
+		}
+
+		/*if(!empty($_SERVER['HTTP_TOKEN'])){
+			$this->user_token = str_replace('"','', $_SERVER['HTTP_TOKEN']);
 			$readed_data = read_user_session($_SERVER['HTTP_TOKEN']);
 			if(!empty($readed_data)){
 				$this->user_details = $readed_data;
@@ -38,7 +41,9 @@ class Restlogin extends REST_Controller{
 			}
 		}else{
 			$this->user_details = NULL;
-		}
+		}*/
+
+		 //$this->response($this->user_details);die;
 	}
 
 	/* return format of login */
@@ -60,50 +65,56 @@ class Restlogin extends REST_Controller{
 		$password = $this->input->post('password');
 
 		/* manupulation of email */
+		if($this->user_details==NULL){
+		
+			if(trim($email)!='' && trim($password)!=''){
 
-		if(trim($email)!='' && trim($password)!=''){
+				/* validating email*/
 
-			/* validating email*/
+				if(is_valid_user($email)==TRUE){
 
-			if(is_valid_user($email)==TRUE){
+					//checking is authendication 
+					$user_id = is_user_auth($email,$password);
 
-				//checking is authendication 
-				$user_id = is_user_auth($email,$password);
+					if(trim($user_id)!==''){
 
-				if(trim($user_id)!==''){
+						/* starting session */
 
-					/* starting session */
+						$return_token = insert_user_session($user_id,$_SERVER['REMOTE_ADDR']);
 
-					$return_token = insert_user_session($user_id);
+						if(trim($return_token)!==''){
 
-					if(trim($return_token)!==''){
+							$this->response(array('status' => TRUE,
+												  'token'  => $return_token,
+												  'message'=> 'user logged in successfully'
+												));
 
-						$this->response(array('status' => TRUE,
-											  'token'  => $return_token,
-											  'message'=> 'user logged in successfully'
-											));
+						}else{ $this->response(array('status' => FALSE,
+												  'message'=> 'user login failure'
+												));
+								}
 
-					}else{ $this->response(array('status' => FALSE,
-											  'message'=> 'user login failure'
-											));
-							}
+						
+					}else{ $this->response(array('status' => FALSE, 'message' => 'Email and Password is missmatch')); }
 
-					
-				}else{ $this->response(array('status' => FALSE, 'message' => 'Email and Password is missmatch')); }
+				}else{ $this->response(array('status' => FALSE, 'message' => 'you are not registered user please sign up')); }
+			}else{
 
-			}else{ $this->response(array('status' => FALSE, 'message' => 'you are not registered user please sign up')); }
-
+				$return_data['status']  = FALSE;
+				$return_data['massage'] = 'email and password should not empty';
+				$this->response($return_data);
+			}
 		}else{
-
-			$return_data['status']  = FALSE;
-			$return_data['massage'] = 'email and password should not empty';
-			$this->response($return_data);
+			$this->response(array('status' => TRUE,
+								  'token'  => $this->user_details->token,	
+								  'message'=> 'user already logged in'
+												));
 		}
 
 	}
 
 	public function test_post(){
-		$this->response(read_user_session($_SERVER['HTTP_TOKEN']));
+		$this->response(read_user_session($this->user_token));
 		//$this->response(user_session_data(101));
 	}
 
