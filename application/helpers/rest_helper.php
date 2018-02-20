@@ -136,9 +136,14 @@ function read_user_session($token='',$ip=''){
 		}else{
 
 			//inserting tracking and deleting management session
-			$data_insert = array_shift(json_decode(json_encode($returned_result), True));
+			$filter_data 	 = NULL;
+			foreach ($returned_result as $key => $value) {	
+				if($key != 'id'){
+				$filter_data[$key] = $value;
+				}
+			}
 
-			$CI->db->insert($CI->db->dbprefix('user_tracking'),$data_insert);
+			$CI->db->insert($CI->db->dbprefix('user_tracking'),$filter_data);
 
 			//deleting cookies from session mangement
 			$CI->db->where('token',$token);
@@ -162,6 +167,7 @@ function user_logout($token){
 	$result = $CI->db->get($CI->db->dbprefix('session_management'));
 
 	if($result->num_rows()){
+
 		//converting to array
 		$returned_result = $result->row();
 		$filter_data 	 = NULL;
@@ -170,15 +176,16 @@ function user_logout($token){
 			$filter_data[$key] = $value;
 			}
 		}
-	// inserting session track
-	$CI->db->insert($CI->db->dbprefix('user_tracking'),$filter_data);
 
-	//deleting management row
-		$CI->db->where('token',$token);
-		if($CI->db->delete($CI->db->dbprefix('session_management'))==TRUE){
-			return TRUE;
+		// inserting session track
+		$CI->db->insert($CI->db->dbprefix('user_tracking'),$filter_data);
+
+		//deleting management row
+			$CI->db->where('token',$token);
+			if($CI->db->delete($CI->db->dbprefix('session_management'))==TRUE){
+				return TRUE;
+			}
 		}
-	}
 
 }
 

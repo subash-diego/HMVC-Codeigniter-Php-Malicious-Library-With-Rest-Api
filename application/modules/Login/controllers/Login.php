@@ -25,30 +25,17 @@ class Login extends REST_Controller{
 
 	public function __construct(){
 		parent::__construct();
-		
-		// validating user 
-		/*if(read_user_session(!empty($_SERVER['HTTP_TOKEN'])?$_SERVER['HTTP_TOKEN']:NULL,$_SERVER['REMOTE_ADDR'])==1){
-		}*/
 
-
+		//user token
 		$this->user_token = !empty($_SERVER['HTTP_TOKEN'])?$_SERVER['HTTP_TOKEN']:NULL;
 
-		//$this->response($this->user_token);die;
+		//user details
+		$credentials = read_user_session(!empty($_SERVER['HTTP_TOKEN'])?$_SERVER['HTTP_TOKEN']:NULL,$_SERVER['REMOTE_ADDR']);
+		$this->user_details = $credentials['data'];
+		
+		//loading login model
+		$this->load->model('Loginmodel');
 
-
-		/*if(!empty($_SERVER['HTTP_TOKEN'])){
-			$this->user_token = str_replace('"','', $_SERVER['HTTP_TOKEN']);
-			$readed_data = read_user_session($_SERVER['HTTP_TOKEN']);
-			if(!empty($readed_data)){
-				$this->user_details = $readed_data;
-			}else{
-				$this->user_details = NULL;
-			}
-		}else{
-			$this->user_details = NULL;
-		}*/
-
-		 //$this->response($this->user_details);die;
 	}
 
 	/* return format of login */
@@ -118,9 +105,26 @@ class Login extends REST_Controller{
 
 	}
 
-	public function test_post(){
-		$this->response(read_user_session($this->user_token));
-		//$this->response(user_session_data(101));
+	//GETTING USER DETAILS 
+
+	public function get_user_details_get($param = ''){
+
+		if($this->user_details!=NULL){
+
+			$user_detail = $this->Loginmodel->get_user_data($this->user_details->userid);
+			$filter_data;
+
+			//filter data 
+			foreach ($user_detail as $key => $value) {
+				if($key!='password'){$filter_data[$key] = $value;}
+			}
+
+			//echo data
+			$this->response(array('status'=>TRUE,'data' => $filter_data));
+		}
+
+		$this->response(array('status'=>FALSE,'message' => 'token not valid'));
+
 	}
 
 	public function logout_get($param=''){
@@ -138,11 +142,6 @@ class Login extends REST_Controller{
 											));
 		}
 
-
 	}
-
-
-
-
 	
 }

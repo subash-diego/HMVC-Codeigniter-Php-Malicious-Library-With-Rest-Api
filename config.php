@@ -19,7 +19,7 @@ define('BASEURL',$mainURL);
 define('db_database','hmvc');
 define('db_hostname','localhost');
 define('db_username','root');
-define('db_password','sd');
+define('db_password','');
 define('db_prefix','hmvc');
 
 /* */
