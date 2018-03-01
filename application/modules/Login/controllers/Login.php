@@ -36,20 +36,43 @@ class Login extends REST_Controller{
 		//loading login model
 		$this->load->model('Loginmodel');
 
+		//////////////////////// LOADING MODELS
+
+		$this->load->model('Common/Commonmysqlmodel');
+        $this->load->model('Common/Commonmongodbmodel');
+
 	}
 
 	/* return format of login */
 
 	public function index_get($param = ''){
-
-		$format = array('status' => TRUE,'inputs' => array('email' =>'' ,'password' => ''));
-
-		$this->response($format);
+		$this->response(
+				array('status' => false,'message' => 'Undefined get function requested','status_code' => 404)
+			);
 	}
+
+	public function index_post($param = ''){
+		$this->response(
+				array('status' => false,'message' => 'Undefined post function requested','status_code' => 404)
+			);
+	}
+
+	public function index_put($param = ''){
+		$this->response(
+				array('status' => false,'message' => 'Undefined put function requested','status_code' => 404)
+			);
+	}
+
+	public function index_delete($param = ''){
+		$this->response(
+				array('status' => false,'message' => 'Undefined delete function requested','status_code' => 404)
+			);
+	}
+	
 
 	/* return is login */
 
-	public function index_post($param = ''){
+	public function Logged_in_post($param = ''){
 
 		$return_data = array();
 
@@ -105,8 +128,7 @@ class Login extends REST_Controller{
 
 	}
 
-	//GETTING USER DETAILS 
-
+	//GETTING USER DETAILS
 	public function get_user_details_get($param = ''){
 
 		if($this->user_details!=NULL){
@@ -127,6 +149,8 @@ class Login extends REST_Controller{
 
 	}
 
+	///////////////////////// LOGOUT
+
 	public function logout_get($param=''){
 
 		if($this->user_token!=NULL){
@@ -143,5 +167,168 @@ class Login extends REST_Controller{
 		}
 
 	}
+
+	//////////////////////// REGISTRATION
+
+	public function registration_post($var=''){
+
+		$firstname = $this->input->post('firstname');
+		$lastname = $this->input->post('lastname');
+		$email = $this->input->post('email');
+		$password = $this->input->post('password');
+		$terms = $this->input->post('terms');
+
+
+		if(trim($firstname)!=='' && trim($lastname)!='' && trim($email)!=='' && trim($password)!==''){
+
+			$register = array(
+                'firstname' => $firstname,
+                'lastname'  => $lastname,
+                'email'     => $email,
+                'password'  => sha1($password),
+                'inserted_date' => date('Y-m-d h:i:s')
+            );
+
+            //////////// VERIFIYING EMAIL
+
+            $dbCondition = array('table' => 'user','dbCondition' => array('email' => $email),'returnType' => 1,'returnData' => 'userid');
+
+            $returnData = json_decode($this->Commonmysqlmodel->getMasterList($dbCondition),TRUE);
+
+            if(count($returnData)>0){
+
+            	$this->response(array('status' => false,'message' => 'Email already registered'));
+
+            }else{
+
+            	////////////////// INSERTING REGISTERED DATA
+
+            	$upCondition = array(
+                    'table'  => 'user',
+                    'action' => 'add',
+                    'dbData' => $register
+                );
+
+                $updateData = $this->Commonmysqlmodel->dbActionScript($upCondition);
+
+                $actionStatus = !empty($updateData['error']['code']) ? $updateData['error']['code'] : '';
+
+                //////////////// RETURNING RESULT
+
+                if($actionStatus==0){
+
+                	$this->response(array('status' => true, 'message' => 'Registration success'));
+
+                }else{
+
+                	$this->response(array('status' => false, 'message' => 'Registration failed'));
+
+                }
+
+                /////////////////////
+            }
+
+		}else{
+
+			$this->response(array('status' => false,'message' => 'should not inputs empty','inputs' => array('firstname','lastname','email','password')));
+		}       
+
+    }
+
+
+    ///////////////////////// SET UP GEO LOCATION
+
+    public function geoaccess_post($param=''){
+
+         $lang = $this->input->post('lang');
+         $latt = $this->input->post('latt');
+
+         if($lang=='' or $latt==''){
+
+         	$this->response(array('status' => false,'message' =>'geo inputs empty','inputs' => array('lang','latt')));die;
+
+         }
+
+         try{
+				
+         $geodata = json_decode(file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?latlng=".$latt.",".$lang."&key=AIzaSyAQFvoxJbkstHuorLu3P8W3lNfV_elngZE"));
+
+         }catch(Exception $e){
+
+         	$this->response(array('status' => false,'message' => 'Error : '.getMessage()));die;
+         }
+
+
+         $postal_code = '';
+         $route       = '';
+         $street_number = '';
+         $sublocality_level_1 = '';
+         $sublocality_level_2 = '';
+         $sublocality_level_3 = '';
+         $city        = '';
+         $state       = '';
+         $country     = '';
+
+         if(count($geodata)){
+
+	        foreach($geodata->results as $results)
+	        {
+
+	            foreach($results->address_components as $address_components)
+	            {
+	                // add code for requirement
+
+	                if(isset($address_components->types) && $address_components->types[0] == 'postal_code')
+	                { $postal_code = $address_components->long_name; }
+
+	                if(isset($address_components->types) && $address_components->types[0] == 'street_number')
+	                    { $street_number = $address_components->long_name; }
+
+	                if(isset($address_components->types) && $address_components->types[0] == 'route')
+	                    { $route = $address_components->long_name; }
+
+	                if(isset($address_components->types) && !empty($address_components->types[2])?$address_components->types[2]:'' == 'sublocality_level_3')
+	                    { $sublocality_level_3 = $address_components->long_name; }
+
+	                if(isset($address_components->types) && !empty($address_components->types[2])?$address_components->types[2]:'' == 'sublocality_level_2')
+	                    { $sublocality_level_2 = $address_components->long_name; }
+
+	                if(isset($address_components->types) && !empty($address_components->types[2])?$address_components->types[2]:'' == 'sublocality_level_1')
+	                    { $sublocality_level_1 = $address_components->long_name; }
+
+	                if(isset($address_components->types) && $address_components->types[0] == 'locality')
+	                    { $city = $address_components->long_name; }
+
+	                if(isset($address_components->types) && $address_components->types[0] == 'administrative_area_level_1')
+	                    { $state = $address_components->long_name; }
+
+	                if(isset($address_components->types) && $address_components->types[0] == 'country')
+	                    { $country = $address_components->long_name; }
+
+	            }
+	        }
+
+	        $usergeodata = array(
+
+                    'postal_code' => $postal_code,
+                    'street_number' => $street_number,
+                    'route'       => $route,
+                    'street_number' => $street_number,
+                    'sublocality_level_1' => $sublocality_level_1,
+                    'sublocality_level_2' => $sublocality_level_2,
+                    'sublocality_level_3' => $sublocality_level_3,
+                    'city'        => $city,
+                    'state'       => $state,
+                    'country'     => $country
+
+                    );
+
+        	$this->response(array('status' => true, 'data' => $usergeodata));
+	    }
+
+        
+    }
+
+    //////////////////////////
 	
 }

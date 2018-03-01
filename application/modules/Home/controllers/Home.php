@@ -29,16 +29,97 @@ class Home extends REST_Controller{
 		$credentials = read_user_session(!empty($_SERVER['HTTP_TOKEN'])?$_SERVER['HTTP_TOKEN']:NULL,$_SERVER['REMOTE_ADDR']);
 		$this->user_details = $credentials['data'];
 
+
+		//////////////////////// LOADING MODELS
+
+		$this->load->model('Common/Commonmysqlmodel');
+        $this->load->model('Common/Commonmongodbmodel');
+
+
 	}
 
+	//REQUEST WARNING 
+
 	public function index_get($param = ''){
-		$this->index_post();
+		$this->response(
+				array('status' => false,'message' => 'Undefined get function requested','status_code' => 404)
+			);
 	}
 
 	public function index_post($param = ''){
-
-		$this->response($this->user_details);
-
+		$this->response(
+				array('status' => false,'message' => 'Undefined post function requested','status_code' => 404)
+			);
 	}
+
+	public function index_put($param = ''){
+		$this->response(
+				array('status' => false,'message' => 'Undefined put function requested','status_code' => 404)
+			);
+	}
+
+	public function index_delete($param = ''){
+		$this->response(
+				array('status' => false,'message' => 'Undefined delete function requested','status_code' => 404)
+			);
+	}
+
+
+	///////////////////////////////// GET MASTER REQUESTS //////////////////
+
+	public function hometopbanner_get($param = ''){
+
+		$dbCondition      = array(
+            'table'       => 'hometopbanner',
+            'dbCondition' => array('status' => 0,'isDeleted' => 0),
+            'returnType'  => 1
+        );
+
+        $this->response(array('status' => true,'data' => json_decode($this->Commonmysqlmodel->getMasterList($dbCondition),TRUE)));
+	}
+
+	///////////////////////// GET CATEGORY
+
+	public function category_get($param = ''){
+
+		$dbCondition      = array(
+            'table'       => 'category',
+            'dbCondition' => array('status' => 0,'isDeleted' => 0),
+            'returnType'  => 0
+        );
+
+        $this->response(array('status' => true,'data' => json_decode($this->Commonmysqlmodel->getMasterList($dbCondition),TRUE)));
+	}
+
+	public function subcategory_get($param = ''){
+
+		$dbCondition      = array(
+            'table'       => 'subcategory',
+            'dbCondition' => array('status' => 0,'isDeleted' => 0),
+            'returnType'  => 0
+        );
+
+        $this->response(array('status' => true,'data' =>json_decode($this->Commonmysqlmodel->getMasterList($dbCondition),TRUE)));
+	}
+
+	////////////////// MAIN BANNER 
+
+	public function mainbanner_get($param = ''){
+
+		$dbCondition      = array(
+            'table'       => 'mainbanner',
+            'dbCondition' => array('status' => 0,'isDeleted' => 0),
+            'returnType'  => 0,
+            'orderBy'	  => array('createdDate' => 'DESC')
+        );
+
+        $this->response(array('status' => true,'data' => json_decode($this->Commonmysqlmodel->getMasterList($dbCondition),TRUE)));
+	}
+
+
+
+
+
+
 	
 }

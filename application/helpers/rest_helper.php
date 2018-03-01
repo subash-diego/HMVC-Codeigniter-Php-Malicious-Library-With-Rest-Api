@@ -22,10 +22,10 @@ function is_user_auth($email,$password){
 	$CI->db->where(array('email' => $email, 'password' => sha1($password)));
 	$result = $CI->db->get($CI->db->dbprefix('user'));
 
-	if($result->num_rows() > 0){
+	if($result->num_rows()){
 		
 		$data = $result->row();
-		return (!empty($data->userid));
+		return $data->userid;
 	}
 }
 
@@ -200,6 +200,8 @@ function is_logged_in($token='',$ip='')
 		return TRUE;
 	}
 }
+
+
 
 
 

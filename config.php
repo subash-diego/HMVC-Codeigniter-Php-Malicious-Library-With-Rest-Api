@@ -16,11 +16,11 @@ define('BASEURL',$mainURL);
 
 /* Database settings */
 
-define('db_database','hmvc');
+define('db_database','cakedesert');
 define('db_hostname','localhost');
 define('db_username','root');
 define('db_password','');
-define('db_prefix','hmvc');
+define('db_prefix','cakedesert');
 
 /* */
 
