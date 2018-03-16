@@ -54,6 +54,8 @@ $route['default_controller'] = 'Home';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
+//$route['Admin/category/(:any)'] = 'Admin/category_delete/$id';
+
 /*
 | -------------------------------------------------------------------------
 | Sample REST API Routes

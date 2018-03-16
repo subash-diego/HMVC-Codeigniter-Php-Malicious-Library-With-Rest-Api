@@ -71,7 +71,7 @@ class Home extends REST_Controller{
 
 		$dbCondition      = array(
             'table'       => 'hometopbanner',
-            'dbCondition' => array('status' => 0,'isDeleted' => 0),
+            'dbCondition' => array('is_status' => 0,'is_deleted' => 0),
             'returnType'  => 1
         );
 
@@ -84,7 +84,7 @@ class Home extends REST_Controller{
 
 		$dbCondition      = array(
             'table'       => 'category',
-            'dbCondition' => array('status' => 0,'isDeleted' => 0),
+            'dbCondition' => array('is_status' => 0,'is_deleted' => 0),
             'returnType'  => 0
         );
 
@@ -95,7 +95,7 @@ class Home extends REST_Controller{
 
 		$dbCondition      = array(
             'table'       => 'subcategory',
-            'dbCondition' => array('status' => 0,'isDeleted' => 0),
+            'dbCondition' => array('is_status' => 0,'is_deleted' => 0),
             'returnType'  => 0
         );
 
@@ -108,7 +108,7 @@ class Home extends REST_Controller{
 
 		$dbCondition      = array(
             'table'       => 'mainbanner',
-            'dbCondition' => array('status' => 0,'isDeleted' => 0),
+            'dbCondition' => array('is_status' => 0,'is_deleted' => 0),
             'returnType'  => 0,
             'orderBy'	  => array('createdDate' => 'DESC')
         );

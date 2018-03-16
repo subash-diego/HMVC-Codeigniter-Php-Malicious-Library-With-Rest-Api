@@ -158,6 +158,12 @@ class Login extends REST_Controller{
 				$this->response(array('status' => TRUE,
 									  'message'=> 'user logged out successfully'
 											));
+			}else{
+
+				$this->response(array('status' => false,
+									  'message'=> 'token not valid',
+									  'error' => 'token_not_valid'
+											));	
 			}
 		}else{
 
